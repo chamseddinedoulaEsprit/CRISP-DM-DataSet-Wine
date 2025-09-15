@@ -1,0 +1,57 @@
+# Étape 1 : Business Understanding
+
+## Objectifs Métier
+- Contexte : Une cave à vin veut identifier automatiquement les types de vins (cultivars) basés sur des analyses chimiques pour optimiser la production et la qualité, réduisant les erreurs manuelles dans les tests de laboratoire.
+- Objectifs : Automatiser la classification pour une accuracy >92% (légèrement abaissée vs. Iris en raison de la complexité), temps de prédiction <1s par échantillon, et gérer des features chimiques corrélées pour une robustesse accrue.
+- Contraintes : Dataset plus complexe avec 13 features (risque d'overfitting), classes légèrement déséquilibrées, et variance élevée dans certaines features.
+
+## Objectifs Data Science
+- Problème : Classification multi-classe supervisée.
+- Succès mesuré par : Accuracy, Precision, Recall, F1-score (focus sur macro-average pour classes déséquilibrées).
+- Ressources : Python avec scikit-learn. Ajout possible d'hyperparamètre tuning pour la complexité accrue.
+
+
+
+# Étape 2 : Data Understanding
+
+## Description
+Ici, nous chargeons et explorons le dataset Wine pour comprendre sa structure, qualité et patterns.
+- Features : 13 numériques (e.g., alcohol, malic_acid, ash, alcalinity_of_ash, magnesium, total_phenols, flavanoids, nonflavanoid_phenols, proanthocyanins, color_intensity, hue, od280/od315_of_diluted_wines, proline).
+- Target : class (catégorique : 0, 1, 2 pour trois cultivars de vins).
+- Attentes : Pas de valeurs manquantes (dataset propre), mais vérifier outliers, corrélations fortes (e.g., flavanoids et total_phenols), et déséquilibre léger des classes.
+
+
+
+# Étape 3 : Data Preparation
+
+## Description
+Préparer les données : Nettoyage (vérifier outliers), encodage (target déjà numérique, mais mapper pour lisibilité), split, scaling.
+- Gestion supplémentaire : Détection et traitement d'outliers (e.g., via IQR), feature selection si corrélations trop fortes.
+- Split : 80% train, 20% test, avec stratification pour classes déséquilibrées.
+- Scaling : StandardScaler pour normaliser les features à échelles variées (e.g., proline va jusqu'à 1680, alcohol ~13).
+
+
+
+# Étape 4 : Modeling
+
+## Description
+Entraîner des modèles de classification. Comparer via cross-validation, avec tuning basique pour la complexité.
+- Algos testés : LogisticRegression, DecisionTree, RandomForest, KNN. Ajouter GridSearchCV pour RandomForest (e.g., n_estimators) pour éviter overfitting sur plus de features.
+- Métrique principale : Accuracy, mais surveiller F1-score pour déséquilibre.
+
+
+
+# Étape 5 : Evaluation
+
+## Description
+Évaluer sur test set. Vérifier si accuracy >92%, analyser erreurs par classe.
+- Métriques : Accuracy, Confusion Matrix, Classification Report (focus sur macro F1).
+
+
+
+# Étape 6 : Deployment
+
+## Description
+Préparer pour production : Exporter le modèle, exemple d'API simple ou fonction de prédiction.
+- Outils : Joblib pour sauvegarde.
+- Scénario : Intégrer dans une app web (ex. Flask) pour analyser des échantillons chimiques en temps réel.
